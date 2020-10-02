@@ -48,8 +48,7 @@ for patient_test in os.listdir(results_dir):
       pred[pred != 0] = 1
 
       dices.append(dc(gt, pred))
-
-      raise Exception("test")
+      
     rankRCA[patient_test]=max(dices)
     rankRCA_RV[patient_test]=max(dices_RV)
     rankRCA_MYO[patient_test]=max(dices_MYO)
