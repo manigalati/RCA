@@ -5,19 +5,29 @@ import os
 import nibabel as nib
 import subprocess
 
-subprocess.call("mkdir '/content/drive/My Drive/atlas'", shell=True)
+model="Baumgartner"#
+subprocess.call("mkdir '/content/drive/My Drive/tesi/paper/atlas/"+model+"'", shell=True)
 for patient_test in os.listdir("data/testing/"):
   if(os.path.isdir("data/testing/"+patient_test)):
-    if(patient_test in os.listdir("/content/drive/My Drive/atlas")):
+    if(patient_test in os.listdir("/content/drive/My Drive/tesi/paper/atlas/"+model)):
       continue
-    subprocess.call("mkdir '/content/drive/My Drive/atlas/"+patient_test+"'", shell=True)
-    image_test="data/testing/"+patient_test+"/"+patient_test+"_frame01.nii.gz"
-    label_test="data/testing/"+patient_test+"/"+patient_test+"_ED.nii.gz"
+    subprocess.call("mkdir '/content/drive/My Drive/tesi/paper/atlas/"+model+"/"+patient_test+"'", shell=True)
+    frames=[]
+    for f in os.listdir("data/testing/"+patient_test):
+      if("frame" in f and "_gt" not in f):
+        frames.append(int(f.split("frame")[1].split(".nii.gz")[0]))
+    image_test="data/testing/"+patient_test+"/"+patient_test+"_frame{:02d}.nii.gz".format(min(frames))#
+    label_test="data/predictions/"+model+"/"+patient_test+"_ED.nii.gz"#
     for patient_train in os.listdir("data/training/"):
       if(os.path.isdir("data/training/"+patient_train)):
-        subprocess.call("mkdir '/content/drive/My Drive/atlas/"+patient_test+"/"+patient_train+"'", shell=True)
-        image_train="data/training/"+patient_train+"/"+patient_train+"_frame01.nii.gz"
-        label_train="data/training/"+patient_train+"/"+patient_train+"_frame01_gt.nii.gz"
+        subprocess.call("mkdir '/content/drive/My Drive/tesi/paper/atlas/"+model+"/"+patient_test+"/"+patient_train+"'", shell=True)
+        frames=[]
+        for f in os.listdir("data/training/"+patient_train):
+          if("frame" in f and "_gt" not in f):
+            frames.append(int(f.split("frame")[1].split(".nii.gz")[0]))
+        image_train="data/training/"+patient_train+"/"+patient_train+"_frame{:02d}.nii.gz".format(min(frames))#
+        label_train="data/training/"+patient_train+"/"+patient_train+"_frame{:02d}_gt.nii.gz".format(min(frames))#
+
 
         subprocess.call("cardiovasc_utils -i "+label_test+" --ith 1 3 --dil 3 -o out/label_bin.nii.gz >/dev/null", shell=True)
         
@@ -43,5 +53,5 @@ for patient_test in os.listdir("data/testing/"):
         subprocess.call("reg_f3d -ref "+image_train+" -rmask out/mask_4.nii.gz -flo "+image_test+" -cpp out/nrr.cpp.nii -aff out/test_to_train.txt -ln 5 -lp 5 -be 0.1 -jl 0.01 -noAppJL >/dev/null", shell=True)
 
         #Step 6: Final result
-        subprocess.call("reg_resample -ref "+image_train+" -source "+image_test+" -cpp out/nrr.cpp.nii -res '/content/drive/My Drive/atlas/"+patient_test+"/"+patient_train+"/image.nii.gz' >/dev/null", shell=True)
-        subprocess.call("reg_resample -ref "+image_train+" -source "+label_test+" -cpp out/nrr.cpp.nii -res '/content/drive/My Drive/atlas/"+patient_test+"/"+patient_train+"/seg.nii.gz' >/dev/null", shell=True)
+        subprocess.call("reg_resample -ref "+image_train+" -source "+image_test+" -cpp out/nrr.cpp.nii -res '/content/drive/My Drive/tesi/paper/atlas/"+model+"/"+patient_test+"/"+patient_train+"/image.nii.gz' >/dev/null", shell=True)
+        subprocess.call("reg_resample -ref "+image_train+" -source "+label_test+" -cpp out/nrr.cpp.nii -res '/content/drive/My Drive/tesi/paper/atlas/"+model+"/"+patient_test+"/"+patient_train+"/seg.nii.gz' >/dev/null", shell=True)
