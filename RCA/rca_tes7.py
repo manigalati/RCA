@@ -30,7 +30,7 @@ model="Isensee"
 results_dir="/content/drive/My Drive/tesi/paper/atlas/"+model+"/"
 
 results = {}
-for phase in ["ES,ED"]:
+for phase in ["ES","ED"]:
   results[phase] = {}
   for patient_test in os.listdir(results_dir):
     if(os.path.isdir(results_dir+patient_test)):
