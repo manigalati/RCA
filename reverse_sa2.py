@@ -5,13 +5,12 @@ import os
 import nibabel as nib
 import subprocess
 
-model="Baumgartner"#
+model=#
 subprocess.call("mkdir '/content/drive/My Drive/tesi/paper/atlas/"+model+"'", shell=True)
 for patient_test in os.listdir("data/testing/"):
   if(os.path.isdir("data/testing/"+patient_test)):
-    if(patient_test in os.listdir("/content/drive/My Drive/tesi/paper/atlas/"+model)):
-      continue
-    subprocess.call("mkdir '/content/drive/My Drive/tesi/paper/atlas/"+model+"/"+patient_test+"'", shell=True)
+    if(patient_test not in os.listdir("/content/drive/My Drive/tesi/paper/atlas/"+model)):
+      subprocess.call("mkdir '/content/drive/My Drive/tesi/paper/atlas/"+model+"/"+patient_test+"'", shell=True)
     frames_test=[]
     for f in os.listdir("data/testing/"+patient_test):
       if("frame" in f and "_gt" not in f):
@@ -25,8 +24,14 @@ for patient_test in os.listdir("data/testing/"):
         label_test="data/predictions/"+model+"/"+patient_test+"_ES.nii.gz"#
       for patient_train in os.listdir("data/training/"):
         if(os.path.isdir("data/training/"+patient_train)):
-          if(phase=="ED"):
+        
+          if(patient_train not in os.listdir("/content/drive/My Drive/tesi/paper/atlas/"+model+"/"+patient_test)):
             subprocess.call("mkdir '/content/drive/My Drive/tesi/paper/atlas/"+model+"/"+patient_test+"/"+patient_train+"'", shell=True)
+          elif(len(os.listdir("/content/drive/My Drive/tesi/paper/atlas/"+model+"/"+patient_test+"/"+patient_train))<4 and phase=="ED"):
+            continue
+          elif(len(os.listdir("/content/drive/My Drive/tesi/paper/atlas/"+model+"/"+patient_test+"/"+patient_train))==4):
+            continue
+          
           frames_train=[]
           for f in os.listdir("data/training/"+patient_train):
             if("frame" in f and "_gt" not in f):
