@@ -30,7 +30,7 @@ model="Isensee"
 results_dir="/content/drive/My Drive/tesi/paper/atlas/"+model+"/"
 
 results = {}
-for phase in ["ES","ED"]:
+for phase in ["ED","ES"]:
   results[phase] = {}
   for patient_test in os.listdir(results_dir):
     if(os.path.isdir(results_dir+patient_test)):
@@ -45,6 +45,8 @@ for phase in ["ES","ED"]:
         if(phase=="ED"):
           gtl="data/training/"+patient_train+"/"+patient_train+"_frame{:02d}_gt.nii.gz".format(min(frames_train))
           outputl = results_dir+patient_test+"/"+patient_train+"/"+"seg_ED.nii.gz"
+          if(not os.path.exists(outputl)):
+            outputl = results_dir+patient_test+"/"+patient_train+"/"+"seg.nii.gz"
         else:
           gtl="data/training/"+patient_train+"/"+patient_train+"_frame{:02d}_gt.nii.gz".format(max(frames_train))
           outputl = results_dir+patient_test+"/"+patient_train+"/"+"seg_ES.nii.gz"
